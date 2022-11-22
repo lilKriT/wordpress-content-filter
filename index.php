@@ -21,6 +21,9 @@ class ContentFilter
     {
         // Document title, admin sidebar name, permissions you need, slug, html function, icon, where does it appear (like priority. bigger number, lower position)
         add_menu_page("Words to Filter", "Word Filter", "manage_options", "wordfilter", array($this, "wordFilterPage"), "dashicons-smiley", 100);
+        // It might seem redundant to do this, but this way we can change the sidebar name of the first link.
+        add_submenu_page("wordfilter", "Words to Filter", "Words List", "manage_options", "wordfilter", array($this, "wordFilterPage"));
+
         // menu to add to, document title, sidebar text, permissions, slug, html function
         add_submenu_page("wordfilter", "Word Filter Options", "Options", "manage_options", "wordfilter-options", array($this, "optionsSubPage"));
     }
