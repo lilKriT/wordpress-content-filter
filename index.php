@@ -40,16 +40,30 @@ class ContentFilter
         wp_enqueue_style("filterAdminCSS", plugin_dir_url(__FILE__) . "styles.css");
     }
 
+    function handleForm()
+    {
+        // name of option, value
+        update_option("plugin_words_to_filter", $_POST['pluginWordsToFilter']); ?>
+        <!-- "updated" class is built in WP -->
+        <div class="updated">
+            <p>Your filtered words have been saved.</p>
+        </div>
+    <?php
+    }
+
     function wordFilterPage()
     { ?>
         <div class="wrap">
             <h1>Word Filter</h1>
+            <!-- $_POST is whatever the browser just posted to the server -->
+            <?php if ($_POST['justSubmitted'] == "true") $this->handleForm(); ?>
             <form method="POST">
+                <input type="hidden" name="justSubmitted" value="true">
                 <label for="pluginWordsToFilter">
                     <p>Enter a <strong>comma separated</strong> list of words to filter from content.</p>
                 </label>
                 <div class="word-filter__flex-container">
-                    <textarea name="pluginWordsToFilter" id="pluginWordsToFilter" placeholder="bad, mean"></textarea>
+                    <textarea name="pluginWordsToFilter" id="pluginWordsToFilter" placeholder="bad, mean"><?php echo esc_textarea(get_option("plugin_words_to_filter")); ?></textarea>
                 </div>
                 <input type="submit" name="submit" id="submit" class="button button-primary" value="Save Changes">
             </form>
