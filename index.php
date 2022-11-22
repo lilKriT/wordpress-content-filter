@@ -15,6 +15,7 @@ class ContentFilter
     function __construct()
     {
         add_action("admin_menu", array($this, "addMenu"));
+        add_filter("the_content", array($this, "filterLogic"));
     }
 
     function addMenu()
@@ -85,6 +86,15 @@ class ContentFilter
     { ?>
         Hello Subpage
 <?php }
+
+    function filterLogic($content)
+    {
+        if (get_option("plugin_words_to_filter")) {
+            $wordsToFilter = explode(",", get_option("plugin_words_to_filter"));
+            $wordsToFilterTrimmed = array_map("trim", $wordsToFilter);
+            return str_ireplace($wordsToFilterTrimmed, "****", $content);
+        }
+    }
 }
 
 $contentFilter = new ContentFilter();
