@@ -42,13 +42,21 @@ class ContentFilter
 
     function handleForm()
     {
-        // name of option, value
-        update_option("plugin_words_to_filter", $_POST['pluginWordsToFilter']); ?>
-        <!-- "updated" class is built in WP -->
-        <div class="updated">
-            <p>Your filtered words have been saved.</p>
-        </div>
-    <?php
+        // Check if the nonce is ok
+        if (wp_verify_nonce($_POST["filterNonce"], "saveFilterWords") && current_user_can("manage_options")) {
+            // name of option, value
+            update_option("plugin_words_to_filter", sanitize_text_field($_POST['pluginWordsToFilter'])); ?>
+            <!-- "updated" class is built in WP -->
+            <div class="updated">
+                <p>Your filtered words have been saved.</p>
+            </div>
+        <?php
+        } else { ?>
+            <div class="error">
+                <p>Sorry, you don't have permissions to perform that action.</p>
+            </div>
+        <?php
+        }
     }
 
     function wordFilterPage()
@@ -58,7 +66,10 @@ class ContentFilter
             <!-- $_POST is whatever the browser just posted to the server -->
             <?php if ($_POST['justSubmitted'] == "true") $this->handleForm(); ?>
             <form method="POST">
+                <!-- This is to know whether user has submitted or not -->
                 <input type="hidden" name="justSubmitted" value="true">
+                <!-- This is for security -->
+                <?php wp_nonce_field("saveFilterWords", "filterNonce"); ?>
                 <label for="pluginWordsToFilter">
                     <p>Enter a <strong>comma separated</strong> list of words to filter from content.</p>
                 </label>
